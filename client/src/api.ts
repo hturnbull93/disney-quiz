@@ -1,23 +1,21 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 
-const config: AxiosRequestConfig = {
+const instance  = axios.create({
   baseURL: 'http://localhost:3001',
-}
+  withCredentials: true,
+})
 
-export const postAnswer = (id: number, answer: string) => axios(`/question/${id}`, {
-  ...config,
+export const postAnswer = (answer: string) => instance('/question', {
   method: 'post',
   data: {
     answer
   },
 })
 
-export const getQuestion = (id: number) => axios(`/question/${id}`, {
-  ...config,
+export const getQuestion = () => instance('/question', {
   method: 'get',
 })
 
-export const getResults = () => axios(`/results`, {
-  ...config,
+export const getResults = () => instance(`/results`, {
   method: 'get',
 })

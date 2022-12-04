@@ -4,16 +4,21 @@ export interface QuizProps {
   id: number;
   imageSrc: string;
   options: [string, string, string, string];
-  onAnswer: ({ id, answer }: { id: number; answer: string }) => void;
+  onAnswer: (answer: string) => void;
 }
 
-export const Quiz = ({ id, imageSrc, options, onAnswer }: QuizProps) => (
+export const Quiz: React.FC<QuizProps> = ({
+  id,
+  imageSrc,
+  options,
+  onAnswer,
+}) => (
   <VStack spacing={8}>
-    <Heading>{id}. Which show is this character from?</Heading>
+    <Heading>{id}. Which film is this character from?</Heading>
     <Image src={imageSrc} />
 
     {options.map((option) => (
-      <Button key={option} onClick={() => onAnswer({id, answer: option})}>
+      <Button key={option} onClick={() => onAnswer(option)}>
         {option}
       </Button>
     ))}

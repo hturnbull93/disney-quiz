@@ -28,7 +28,6 @@ app.use(
 );
 
 app.get("/question", async (req, res) => {
-  console.log('req.sessionID', req.sessionID)
   const { question, answer } = await generateQuestionAndAnswer();
 
   if (!req.session.answers) req.session.answers = {};
@@ -42,7 +41,6 @@ app.get("/question", async (req, res) => {
 });
 
 app.post("/question", (req, res) => {
-  console.log('req.sessionID', req.sessionID)
   req.session.answers[req.session.questionNumber].response = req.body.answer;
   
   if (req.session.questionNumber === QUESTION_LIMIT) {
@@ -54,7 +52,6 @@ app.post("/question", (req, res) => {
 });
 
 app.get("/results", (req, res) => {
-  console.log('req.sessionID', req.sessionID)
   const answersArray = Object.values(req.session.answers);
 
   const correctAnswers = answersArray.filter(

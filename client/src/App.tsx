@@ -1,19 +1,12 @@
 import { useState } from "react";
-import {
-  ChakraProvider,
-  Box,
-  Grid,
-  theme,
-  Text,
-  Spinner,
-} from "@chakra-ui/react";
-import { ColorModeSwitcher } from "./components/ColorModeSwitcher";
+import { Text, Spinner } from "@chakra-ui/react";
 import { Welcome } from "./components/Welcome";
 import { Quiz, QuizProps } from "./components/Quiz";
 import { getQuestion, getResults, postAnswer } from "./api";
 import { Results, ResultsProps } from "./components/Results";
+import { Layout } from "./components/Layout";
 
-export const App = () => {
+export const App: React.FC = () => {
   const [stage, setStage] = useState<"start" | "quiz" | "results">("start");
 
   const [question, setQuestion] = useState<Omit<QuizProps, "onAnswer">>();
@@ -29,7 +22,7 @@ export const App = () => {
     };
 
   const fetchQuestion = asyncActionHandler(async () => {
-    const result = await getQuestion(1);
+    const result = await getQuestion();
     setQuestion(result.data);
     setStage("quiz");
   });
@@ -41,35 +34,29 @@ export const App = () => {
   });
 
   const handleAnswer = asyncActionHandler(
-    async ({ id, answer }: { id: number; answer: string }) => {
-      const result = await postAnswer(id, answer);
-      console.log("result", result);
+    async (answer:string) => {
+      const result = await postAnswer(answer);
+
       if (result.data.nextQuestion) {
-        await fetchQuestion(result.data.nextQuestion);
+        await fetchQuestion(null);
       } else if (result.data.complete) {
-        await fetchResults(null)
+        await fetchResults(null);
       }
     }
   );
 
+  if (loading) return (
+    <Layout><Spinner mx="auto" /></Layout>
+  )
+
   return (
-    <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          {loading && <Spinner />}
-          {stage === "start" && <Welcome onStart={() => fetchQuestion(0)} />}
-          {stage === "quiz" && !question && (
-            <Text>Something went wrong!</Text>
-          )}
-          {stage === "quiz" && !!question && (
-            <Quiz {...question} onAnswer={handleAnswer} />
-          )}
-          {stage === "results" && !!results && (
-            <Results {...results} />
-          )}
-        </Grid>
-      </Box>
-    </ChakraProvider>
+    <Layout>
+      {stage === "start" && <Welcome onStart={() => fetchQuestion(0)} />}
+      {stage === "quiz" && !question && <Text>Something went wrong!</Text>}
+      {stage === "quiz" && !!question && (
+        <Quiz {...question} onAnswer={handleAnswer} />
+      )}
+      {stage === "results" && !!results && <Results {...results} />}
+    </Layout>
   );
 };

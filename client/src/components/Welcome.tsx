@@ -4,7 +4,7 @@ export interface WelcomeProps {
   onStart: () => Promise<void>
 }
 
-export const Welcome = ({ onStart }: WelcomeProps) => (
+export const Welcome: React.FC<WelcomeProps> = ({ onStart }) => (
   <VStack spacing={8}>
     <Heading>Disney Quiz</Heading>
     <Text>Try to guess the show the character is from!</Text>
